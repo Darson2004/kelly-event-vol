@@ -1,0 +1,189 @@
+# Hypothesis grid — event-vol top-decile signal hunt
+# Written 2026-09-01 at exploration Stage B1, BEFORE any probe (experiments.jsonl
+# empty at commit time). Feature = frozen column | colA/colB | month.
+# sign = predicted direction of the statistic for feature-above-median.
+# Winner outcome fixed ex-ante: long_ret_net >= +0.50 (WIN_THR in harness).
+
+- id: H1
+  persona: vol-dealer
+  feature: ratio_avg_im
+  sign: "-"
+  statistic: tail+ic+median
+  mechanism: >
+    The established repricing channel: implied move furthest below the
+    name's own implied-history norm has the most room to be bid back up
+    into the event; the largest repricings start cheapest, so tail winners
+    concentrate in the low-ratio half.
+
+- id: H2
+  persona: vol-dealer
+  feature: im_entry/iv_amb_entry
+  sign: "+"
+  statistic: tail+ic
+  mechanism: >
+    Event-share leverage: when the event component dominates the straddle
+    premium relative to ambient vol, a given repricing of the implied move
+    moves the position price more; high event-share entries convert
+    repricing into P&L more efficiently.
+
+- id: H3
+  persona: regime-macro
+  feature: iv_amb_entry
+  sign: "-"
+  statistic: tail+ic+median
+  mechanism: >
+    Complacency mispricing: quiet ambient regimes anchor event pricing too
+    low across the board; entries made in low-ambient-vol conditions carry
+    underpriced tails that violent prints expose. (Tension: liquid winners
+    clustered in high-vol QUARTERS - the persona disagreement is the point.)
+
+- id: H4
+  persona: regime-macro
+  feature: month
+  sign: "-"
+  statistic: tail
+  mechanism: >
+    Reporting-season structure: January-April prints carry full-year
+    guidance resets (bigger true event variance vs. mid-year updates), so
+    early-calendar events have fatter surprise tails than implied pricing
+    reflects. Weak mechanism - registered as exploratory.
+
+- id: H5
+  persona: microstructure
+  feature: spread_frac_entry
+  sign: "-"
+  statistic: tail+ic
+  mechanism: >
+    Dual reading: spread is a direct cost on net returns (partly MECHANICAL,
+    since winners are defined on net) and an illiquidity proxy. Skeptic
+    flag attached: auditor must test whether the effect survives on the
+    gross-return ranking before any promotion.
+
+- id: H6
+  persona: microstructure
+  feature: prem_frac_entry
+  sign: "-"
+  statistic: tail+ic
+  mechanism: >
+    Absolute-convexity pricing: a low straddle premium as a fraction of spot
+    means the market is pricing a quiet name; tail convexity per premium
+    dollar is greatest exactly there, and vol sellers systematically
+    under-reserve for regime breaks in quiet names.
+
+- id: H7
+  persona: behavioral-attention
+  feature: ratio_last_rm
+  sign: "+"
+  statistic: tail+ic+median
+  mechanism: >
+    Recency anchoring after a quiet print: a HIGH implied-vs-last-realized
+    ratio means the previous earnings move was unusually small; anchored
+    expectations (and our own history-based ratios) mark the name down,
+    while realized earnings moves mean-revert - the next print snaps back
+    violently. Predicts winners in the high half.
+
+- id: H9
+  persona: skeptic
+  feature: spot_entry
+  sign: null
+  statistic: tail+ic
+  mechanism: >
+    NULL CONTROL. Share-price level has no ex-ante mechanism; if "winners"
+    load on low-priced stocks, the persona hypotheses above are penny-stock
+    vol artifacts wearing costumes. Expected verdict: NULL-WITH-POWER.
+
+- id: H10
+  persona: skeptic
+  feature: amb_rv_hold
+  sign: "+"
+  statistic: tail
+  mechanism: >
+    LEAKY POSITIVE CONTROL - never promotable. Realized vol over the hold
+    window overlaps the outcome; it MUST show a strong effect if the
+    harness has power. Validates the machinery and calibrates what a
+    mechanically-contaminated "signal" looks like.
+
+# ---------------------------------------------------------------------------
+# ITERATION 2 - written 2026-09-01 at exploration Stage B1 (second discovery loop),
+# BEFORE any iteration-2 probe. experiments.jsonl stood at 48 entries
+# (X0001-X0048) at commit time. Registry R1-R6 already LOCKED; nothing below
+# may join the B5 family without a disclosed registry re-lock BEFORE the
+# lockbox opens. Cells chosen to cover ex-ante columns/ratios never probed
+# in iteration 1: dte_entry, n_prior_rm, n_prior_im, and two frozen-column
+# ratios that cancel im_entry.
+# ---------------------------------------------------------------------------
+
+- id: H11
+  persona: vol-dealer
+  feature: ratio_avg_im/ratio_avg_rm
+  sign: "+"
+  statistic: tail+ic
+  mechanism: >
+    Structural per-name VRP gap: ratio_avg_im = im_entry/avg(prior implied
+    moves) and ratio_avg_rm = im_entry/avg(prior realized moves), so their
+    ratio cancels im_entry and equals avg(prior realized)/avg(prior
+    implied) - the name's own historical realized-vs-implied gap, fully
+    ex-ante. Names that chronically MOVE more than they IMPLY are
+    persistently under-reserved by sellers; big winners should concentrate
+    in the high half. SKEPTIC flag: numerator needs implied-move history
+    (n_prior_im sparse in small-caps) - usable-n must be reported first;
+    a thin-coverage subsample verdict cannot generalize.
+
+- id: H12
+  persona: microstructure
+  feature: dte_entry
+  sign: "-"
+  statistic: tail+ic
+  mechanism: >
+    Listing-granularity dilution: the T-14 entry buys the nearest
+    post-event expiry; monthly-only names carry longer dte_entry, so the
+    event component is a thinner slice of total straddle variance and the
+    same event repricing moves the position price less - fewer +50% net
+    winners in the long-dte half. Counter-mechanism (vol-dealer persona
+    disagrees): monthly-only names have less developed options markets and
+    fatter mispricing; if the SIGN comes out + that story wins. SKEPTIC
+    flag: dte also scales theta paid, partly mechanical through net
+    returns.
+
+  # CORRECTION 2026-09-01, post-audit (notes/H12_audit.md). The mechanism
+  # above is REFUTED and the feature is MISNAMED. dte_entry is NOT days to
+  # expiry: it equals (ann_date - entry_date).days for 2892/2892 rows and
+  # matches (expiry_post - entry_date) for 0.31%. It is the T-14 ENTRY-DATE
+  # SNAP INDICATOR (all 2764 rows at 14 have entry weekday == announcement
+  # weekday; all 128 off-tie rows do not). The variable this hypothesis
+  # actually described - true dte = expiry_post - entry_date, range 14-60,
+  # median 24 - is NULL: IC +0.0148 (wrong sign), median gap +0.027, tail
+  # gap -0.016. The panel DOES contain true monthlies (679 trades at 31+),
+  # contra the note. Original text left intact above for trial-record
+  # integrity; do not read it as a standing claim.
+
+- id: H13
+  persona: behavioral-attention
+  feature: n_prior_rm
+  sign: "-"
+  statistic: tail
+  mechanism: >
+    Coverage/maturity proxy: realized-move history depth counts how many
+    prior events the pipeline (and roughly, the market's memory) has for
+    the name. Young option histories = pricing with less memory = fatter
+    two-sided mispricing; winners concentrate in the LOW half. SKEPTIC
+    flag (strong): n_prior grows mechanically with panel time, so this is
+    confounded with season/regime - within-season permutation p is the
+    only admissible read, and a season-balanced check is mandatory before
+    any promotion.
+
+- id: H14
+  persona: vol-dealer
+  feature: ratio_last_im/ratio_avg_im
+  sign: "+"
+  statistic: tail
+  mechanism: >
+    Implied-side recency anchor, the mechanism-isolation partner of
+    R1/H7: the ratio cancels im_entry and equals avg(prior im)/last(prior
+    im) - high means the name's LAST event was priced below its own
+    implied norm. If H7's recency-anchoring is a general recency effect
+    it should appear here too; if H7 is specific to realized-move
+    anchoring, this should be null. EITHER outcome is informative for the
+    locked R1/R2 mechanism. Expected BLOCKED/thin: implied history is the
+    sparse column in small-caps (the H1 coverage degeneracy); report
+    usable n before any verdict.

@@ -1,0 +1,150 @@
+# Execution hypothesis queue — seeded 2026-09-01, before any probe.
+# Every entry needs: mechanism, the harness command that tests it, a
+# pre-committed sign, and the decision it would change. A hypothesis that
+# cannot change a decision does not belong in an execution pack.
+#
+# priority = Importance x Uncertainty x Decision-Impact, scored 1-5 each.
+
+- id: EX-1
+  title: The high-spread gross-tail anomaly
+  persona: cost-analyst
+  priority: 125          # 5 x 5 x 5 — the single most valuable open question
+  mechanism: >
+    Standing anomaly from the signal pack: high-spread names carry roughly
+    3x the GROSS tail rate, exactly consumed by costs. If that gross tail is
+    real, the question is not "avoid wide markets" but "can the tail be
+    reached at a lower toll" - via a different entry lead, a chain-density
+    screen, or patience. If it cannot, wide markets are permanently
+    untradeable and the universe is settled.
+  test: >
+    admit --data panel_liquid.csv --screen "cost_frac<=0.08" --lead 14
+    (then sweep the threshold, and repeat at each lead)
+  sign: "admitted net median > all-events net median, WITHOUT losing more
+         than half the gross-tail events (G3 both-sides)"
+  decision_changed: universe definition and the per-event go/no-go screen
+
+- id: EX-2
+  title: Entry-lead cost curve
+  persona: cost-analyst
+  priority: 100          # 5 x 4 x 5
+  mechanism: >
+    The strategy enters at T-14 purely because the signal paper did. Closer
+    to the print, option volume rises (tighter quotes) but event risk rises
+    (wider quotes). These push opposite ways and the net has never been
+    measured on our own tape. Within-event pairing makes this near-confound-
+    free: the same event, the same expiry, different entry day.
+  test: >
+    policy --data panel_liquid.csv --a 3 --b 14 --metric cost
+    (full pairwise grid across leads {3,5,7,10,14})
+  sign: "no pre-commitment - this is a measurement, not a bet. Sign is
+         recorded before the grid is read and the grid is read once."
+  decision_changed: the entry day itself - the most basic execution parameter
+
+- id: EX-3
+  title: Stale marks contaminate the backtest
+  persona: data-integrity
+  priority: 100          # 5 x 5 x 4
+  mechanism: >
+    The H12 audit's leading explanation for a "robust" signal-pack finding
+    was entry-mark quality on sparse chains. If a material share of entries
+    are struck on quotes identical to the prior session, those are marks and
+    not fills, and the graduated +6.39%/trade is partly fiction. This
+    hypothesis grades the backtest itself, not a trading rule.
+  test: >
+    dict --data panel_liquid.csv --col stale_dd ; then
+    test --data panel_liquid.csv --feature stale_dd --target cost_ic --sign +
+    ; then stratify gross/net by stale_dd at each lead
+  sign: "+ (stale entries show systematically different measured cost)"
+  decision_changed: whether the headline backtest number needs restating
+
+- id: EX-4
+  title: Chain density as a pre-trade executability screen
+  persona: microstructure
+  priority: 80           # 4 x 4 x 5
+  mechanism: >
+    n_strikes quoted for the chosen expiry is knowable BEFORE entry and is a
+    plausible proxy for market development. If it predicts cost, it is a
+    legitimate pre-trade screen; unlike realized spread it requires no
+    look-ahead at the moment of decision.
+  test: >
+    test --data panel_liquid.csv --feature n_strikes --target cost_ic --sign -
+    ; then admit --screen "n_strikes>=20"
+  sign: "-"
+  decision_changed: adds a cheap, knowable-at-entry admission filter
+
+- id: EX-5
+  title: Which lead maximises paired NET, not cost
+  persona: cost-analyst
+  priority: 80           # 4 x 4 x 5
+  mechanism: >
+    EX-2 measures the toll; this measures the toll against what the extra
+    days of repricing are worth. Deliberately separated from EX-2 so the
+    cost result is read before the net result and cannot be rationalised
+    backwards (G2).
+  test: >
+    policy --data panel_liquid.csv --a A --b B --metric net (full grid),
+    reported alongside the same grid at --metric gross
+  sign: "no pre-commitment; grid read once, after EX-2 is closed"
+  decision_changed: the entry day, on the metric that actually pays
+
+- id: EX-6
+  title: Is executability a stable name attribute?
+  persona: cost-analyst
+  priority: 64           # 4 x 4 x 4
+  mechanism: >
+    Every pre-trade screen assumes cost is predictable from the past. If a
+    name's cost_frac at this event does not predict its cost at the next,
+    no screen can work and the only defence is a live abort rule. This is
+    the enabling condition for EX-1 and EX-4 and should be read as their
+    prerequisite.
+  test: >
+    build a per-name lagged cost column, then
+    test --data panel_liquid.csv --feature cost_prev --target cost_ic --sign +
+    (requires a panel amendment - propose, freeze, re-verify semantics)
+  sign: "+"
+  decision_changed: whether pre-trade screening is possible at all, or
+                    whether execution control must be live-only
+
+# ---------------------------------------------------------------------------
+# ADDED AT TICK 1 (2026-09-01), after the EX-2 audit
+# ---------------------------------------------------------------------------
+
+- id: EX-7
+  title: Does any lead advantage survive with announcement weekday held fixed?
+  persona: skeptic
+  priority: 100          # 5 x 4 x 5 - it decides whether EX-2 has any rule in it
+  mechanism: >
+    ANOM-3: entry weekday is near-collinear with lead bucket (ann-7 and
+    ann-14 land on the announcement's own weekday; ann-3/5/10 are ~65%
+    Friday), and this collinearity already manufactured one false finding
+    (the T-10 saving, now REFUTED as POLICY P7). Options quotes are known to
+    widen into weekends. The honest question is whether ANY of the measured
+    lead gradient is a lead effect rather than a weekday effect.
+  test: >
+    stratify every lead pair by announcement weekday and require the sign in
+    a majority of strata with dose-ordering inside them; the (3,14)
+    comparison already passes 5/5 and is the positive control, (10,14) fails
+    1/5 and is the negative control.
+  sign: "no pre-commitment; this is a confound test, not a bet"
+  decision_changed: whether the entry-day question is live at all, or closed
+  prerequisite_note: >
+    Do not re-test any lead pair without this stratification. STATE.json
+    ANOM-3 and POLICY standing limitation 2 both bind here.
+
+# ---------------------------------------------------------------------------
+# RE-SCOPED AT TICK 1
+# ---------------------------------------------------------------------------
+# EX-5  "which lead maximises paired NET" is NOT an experiment (ANOM-2).
+#       exit_mid is one value per event, so paired gross and paired net are
+#       deterministic functions of the entry mids EX-2 already published.
+#       Answer it by calculation; spend no alpha; do not spawn a runner.
+#
+# EX-3  BLOCKED on AMEND-1. Its headline feature (stale_dd) is constant on
+#       this panel by construction, not by fact.
+#
+# ---------------------------------------------------------------------------
+# BLOCKED - do not queue until the data exists (see STATE.json blocked_pending_user)
+# ---------------------------------------------------------------------------
+# EX-B1  time-of-day entry timing         needs full-session intraday quotes
+# EX-B2  queue position / passive fills    needs sizes, and trade prints
+# EX-B3  realistic fill-probability model  needs both of the above

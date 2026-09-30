@@ -1,0 +1,217 @@
+{
+  "pack": "execution",
+  "created": "2026-09-01",
+  "tick": 2,
+  "last_tick_ts": "2026-09-01",
+  "last_tick_result": "P2 graded and audited FRAGILE. POLICY v2: P2 regraded ASSUMED -> MEASURED-WITH-BAND (number 0.5 retained, basis replaced); P2a mid-or-better REFUTED; P2b phi falls with tick width and rises with clip size; P8 capacity rule BLOCKED on a bad denominator. Amendments A2 and A3 applied; A3 was a disclosed mid-tick protocol violation.",
+  "harness_sha256": "af29ac659de95d4564a8c1815d9eba0dcb8f2da77140823a03f6283c63cc794c",
+  "harness_note": "A4 applied between ticks 2 and 3 (researcher-approved). Selftest 19/19.",
+  "panel": {
+    "file": "panel_fills_v2.csv",
+    "sha256": "03d1f265f2a43dc6bff3799533f034c972d90c18e9d062229940d35cb60ae4f3",
+    "rows": 4835,
+    "events": 967,
+    "entry_fill_rows": 539,
+    "semantics_verified": true,
+    "semantics_columns_checked": 20,
+    "superseded": {
+      "panel_liquid.csv": "c88784ed... (tick 1)",
+      "panel_liquid_v2.csv": "8f90f8a2... (A1)",
+      "panel_liquid_v3.csv": "3c926657... (A2 base, retained)",
+      "panel_fills.csv": "a4340d0f... (tick 2, retained)"
+    }
+  },
+  "alpha": {
+    "total": 0.1,
+    "schedule": "alpha_k = 0.10 * 6/(pi^2 * k^2)",
+    "spent": 0.075991,
+    "remaining": 0.024009,
+    "per_tick": {
+      "1": 0.060793,
+      "2": 0.015198,
+      "3": 0.006755,
+      "4": 0.0038,
+      "5": 0.002432,
+      "6": 0.001689
+    },
+    "ledger": [
+      {
+        "tick": 1,
+        "hypothesis": "EX-2",
+        "alpha_allotted": 0.060793,
+        "probes": 24,
+        "audit_replays": 25,
+        "outcome": "FRAGILE - (3,14) cost measurement survives all kill vectors; (10,14) REFUTED as weekday artifact; convexity claim withdrawn",
+        "note": "Full allotment debited. Budget is never recovered, including for the refuted sub-results."
+      },
+      {
+        "tick": 2,
+        "hypothesis": "P2",
+        "alpha_allotted": 0.015198,
+        "probes": 17,
+        "audit_replays": 20,
+        "outcome": "FRAGILE. Nothing cleared alpha_2 (best cross-sectional perm_p = 0.02398 at E0054). Booked as ESTIMATION not discovery: calibrating an assumed constant, per the P1 precedent.",
+        "note": "Full allotment debited. Budget never recovered."
+      }
+    ]
+  },
+  "trials": {
+    "cumulative": 90,
+    "by_tick": {
+      "1": 49,
+      "2": 41
+    },
+    "note": "E0001-E0049 tick 1; E0050-E0070 tick 2 runner; E0071-E0090 tick 2 audit."
+  },
+  "queue_status": {
+    "QUEUED": [
+      "EX-6",
+      "EX-1",
+      "EX-4",
+      "EX-7",
+      "EX-5",
+      "EX-3"
+    ],
+    "PROBED": [],
+    "AUDITED": [],
+    "CANDIDATE": [],
+    "PROSPECTIVE": [],
+    "POLICY": [],
+    "CLOSED": [
+      "EX-2",
+      "P2"
+    ],
+    "BLOCKED": []
+  },
+  "next_tick_plan": {
+    "tick": 3,
+    "alpha_available": 0.006755,
+    "free_work_first": "DONE (A4). Tick 3 starts on EX-6 (is executability predictable), which gates every screen hypothesis.",
+    "candidate": "EX-6 (is executability predictable) - gates every screen",
+    "binding_constraints": [
+      "Hold announcement weekday fixed in any lead comparison (ANOM-3).",
+      "Do not write a capacity rule until volume is re-derived from full-day data (ANOM-8)."
+    ]
+  },
+  "anomalies": [
+    {
+      "id": "ANOM-1",
+      "tick": 1,
+      "found_by": "EX-2 runner, diagnosed by EX-2 auditor (notes/EX-2_audit.md)",
+      "what": "stale_dd is identically 0.0 across all 4778 non-null panel rows. Guard G4 is satisfied VACUOUSLY, and the G1 assertion for stale_dd (set(unique) subset of {0,1}) passes trivially on an all-zeros column.",
+      "why": "cmd_build requires exact 4-way float equality of call_bid, call_ask, put_bid, put_ask vs the prior session at the same strike. Auditor measured the true rates read-only on canonical_liquid chains (518,008 contract-days, ATM +/-2%): per-leg unchanged 1.07%, >=1 leg 3.37%, all four 0.019%. Expected firings over 4,778 rows = ~0.9. The detector is not broken; it is too strict by roughly two orders of magnitude.",
+      "impact": "A 0/4778 reading is equally consistent with 'no staleness' and 'fires once per 5,000 rows'. EX-3 is untestable as the panel stands. G1 has a coverage hole: an assertion that a column is binary is satisfied by a constant column.",
+      "status": "RECORDED, NOT FIXED. See AMEND-1."
+    },
+    {
+      "id": "ANOM-2",
+      "tick": 1,
+      "found_by": "EX-2 auditor",
+      "what": "EX-5 ('which lead maximises paired NET') is arithmetically closed, not an independent experiment.",
+      "why": "cmd_build computes exit_mid and exit_date ONCE per event, outside the lead loop (verified: 0 of 967 events have more than one distinct exit_mid). Therefore gross_a - gross_b = exit_mid*(mid_b - mid_a)/(mid_a*mid_b) is a deterministic function of the entry mids EX-2 already published, and paired net is fully determined by entry_mid and entry_spread at the two leads.",
+      "impact": "This is a TRUE property of the trade (both leads exit at the same pre-print mark), not a build bug. But it means EX-5 spends no alpha and provides no new evidence: choosing a lead on net is a calculation, not an experiment. Protocol lesson: some execution questions are arithmetic, and the pipeline must recognise them rather than paying alpha for them.",
+      "status": "EX-5 RE-SCOPED to a deterministic calculation. Removed from the alpha-spending queue."
+    },
+    {
+      "id": "ANOM-3",
+      "tick": 1,
+      "found_by": "EX-2 auditor",
+      "what": "Entry weekday is near-collinear with lead bucket, and nominal lead labels misstate realised leads.",
+      "why": "ann-7 and ann-14 land on the announcement's own weekday; ann-3/5/10 are ~65% Friday. Realised mean leads are 3.98/5.43/7.03/11.01/14.05, so real step sizes are 1.45/1.60/3.98/3.04 days rather than the nominal 2/2/3/4.",
+      "impact": "Produced the false T-10 finding (now POLICY P7, REFUTED) and the false convexity claim (withdrawn). Any future lead comparison MUST hold announcement weekday fixed.",
+      "status": "RECORDED. Encoded as POLICY standing limitation 2 and as new hypothesis EX-7."
+    },
+    {
+      "id": "ANOM-4",
+      "tick": 1,
+      "found_by": "EX-2 auditor",
+      "what": "The cost gradient's mechanism is the reverse of the runner's reading.",
+      "why": "Within-event decomposition: sqrt(dte) x1.558, spread x1.389, IV level x0.731, IV width x0.850, giving cost_frac x1.162 exactly. Vega-normalised, the quote is WIDER near the print (paired +0.0018, p=0.0005).",
+      "impact": "T-3 is cheap because implied vol is ~37% higher there (denominator effect), not because markets tighten into the event. Cost saving and gross give-up are one variable wearing two hats - which is the same fact ANOM-2 states arithmetically.",
+      "status": "RECORDED in POLICY v1 hurdle caveat. Unpromoted; no rule rests on it."
+    },
+    {
+      "id": "ANOM-5",
+      "tick": 2,
+      "what": "cmd_test emitted no p-value; its ci95 was a CI for median cost_frac, not for the reported Spearman.",
+      "impact": "No cross-sectional hypothesis in this pack could ever clear an alpha threshold. Tick-1 EX-2 unaffected (paired policy).",
+      "status": "FIXED in A3"
+    },
+    {
+      "id": "ANOM-6",
+      "tick": 2,
+      "what": "Exit-day tcbbo was never purchased: eligible_events() tested the TIME-OF-DAY window against the string 'entry+exit', which it can never equal, so the exit branch was dead code.",
+      "impact": "The round-trip restatement ASSUMES exit symmetry and turns negative at phi_exit = 0.605, which is not remote. 184 of 343 exit days missing; exact quote $99.42.",
+      "status": "BUG FIXED in fetch_tcbbo.py (--days flag); DATA STILL UNPURCHASED - awaiting spend decision"
+    },
+    {
+      "id": "ANOM-7",
+      "tick": 2,
+      "what": "test --target stale referenced stale_dd, removed by A1; selftest stayed green because its fixture kept the dead column.",
+      "impact": "Real path would raise KeyError.",
+      "status": "FIXED in A3"
+    },
+    {
+      "id": "ANOM-10",
+      "tick": 2,
+      "what": "require_semantics() silently passed columns absent from SEMANTICS, so the seven A2 fills columns were gradeable with no assertion at all.",
+      "impact": "Two tick-2 probes went through the hole.",
+      "status": "FIXED in A3 (UNASSERTED_OK allowlist)",
+      "note_id_collision": "renumbered from ANOM-4 (collided with the tick-1 mechanism anomaly)"
+    },
+    {
+      "id": "ANOM-8",
+      "tick": 2,
+      "found_by": "P2 auditor",
+      "what": "phi_implied_entry prose says 'on the entry day' and volume_entry is described as 'entry-day volume'; both are 15:00-16:00 ET ONLY.",
+      "impact": "The capacity findings (median 33 contracts, 20.2% of days with a leg that never traded) are LAST-HOUR statements, so any '% of daily volume' abort rule rests on a denominator off by an unknown multiple. phi itself is unaffected. G1 passed because the lambda only range-checks [0,3] - the exact failure class G1 exists to prevent.",
+      "status": "PARTIALLY RESOLVED in A4: columns renamed to say LAST HOUR and the assertion forbids capacity use. Full-day volume is NOT derivable from purchased data, so POLICY P8 stays BLOCKED."
+    },
+    {
+      "id": "ANOM-9",
+      "tick": 2,
+      "found_by": "P2 auditor",
+      "what": "Aggregation mismatch in cmd_fills (exec_harness.py:707-708): eff_half_frac/quoted_half_frac are a MEAN OF PER-LEG RATIOS while cost_frac is a RATIO OF STRADDLE SUMS, and phi_implied is a third convention.",
+      "impact": "phi_B is robust (the errors cancel) but phi_A is not: dollar-correct phi_A is 0.478 with a CI CONTAINING 0.50, so the claim '0.5 is too kind' was an artifact. Also explains why 0.55 x 0.88 did not equal 0.396.",
+      "status": "RESOLVED in A4. Rebuilt dollar-consistent phi = 0.478, matching the auditor's 0.4777 independently."
+    }
+  ],
+  "proposed_amendments": [
+    {
+      "id": "AMEND-1",
+      "proposed_tick": 1,
+      "targets": [
+        "exec_harness.py cmd_build",
+        "SEMANTICS['stale_dd']",
+        "G1 assertion class"
+      ],
+      "rationale": "ANOM-1. A staleness detector that fires ~0.9 times per panel provides no protection, and a semantics assertion that a constant column satisfies provides no guard.",
+      "sketch": "(a) replace 4-way exact equality with a graded n_unchanged_legs in {0..4}; (b) add economic staleness - option mid or IV unchanged WHILE spot moved; (c) add book-quality flags: zero/absent bid, crossed or locked quote, spread vs the contract's own trailing median; (d) strengthen G1 to reject DEGENERATE columns (require nunique() > 1), not only out-of-domain ones.",
+      "requires": "researcher approval; panel rebuild; new panel hash; re-verification of semantics; harness re-freeze with the new sha256 recorded here",
+      "status": "AWAITING RESEARCHER APPROVAL. Amendments are legitimate only BETWEEN ticks and never in response to a result. EX-3 stays BLOCKED until resolved."
+    },
+    {
+      "id": "AMEND-4",
+      "proposed_tick": 2,
+      "targets": [
+        "cmd_fills aggregation (ANOM-9)",
+        "phi/volume column prose (ANOM-8)",
+        "size- and width-conditioned phi (POLICY P2b)"
+      ],
+      "rationale": "The P2 audit named this the highest-value next step and it costs nothing.",
+      "sketch": "(a) compute all fill quantities in consistent dollars (ratio of sums) so phi_A and phi_B are comparable; (b) rename the volume/phi columns to say LAST-HOUR explicitly and derive a full-day volume column for capacity work; (c) emit phi conditioned on clip-size bucket and quoted tick width, which the audit showed is the correct functional form.",
+      "requires": "researcher approval; panel rebuild; new hashes; semantics re-verification",
+      "status": "APPLIED 2026-09-01 as FREEZE amendment A4"
+    }
+  ],
+  "blocked_pending_decision": [
+    {
+      "id": "BLOCK-1",
+      "status": "PARTIALLY RESOLVED",
+      "done": "Entry-day tcbbo purchased 2026-09-01 for $52.65 (321 days, 568 events). P2 is now measured on the entry leg.",
+      "outstanding": "Exit-day tcbbo - 184 missing days, EXACT quote $99.42 (event-day volume is far higher than entry-day, hence ~2x the entry cost). A stratified ~200-event subset at roughly $40 would measure exit phi to about +/-0.03, enough to settle whether it clears the 0.605 breakeven.",
+      "why_it_matters": "The +6.39% -> +6.62% restatement assumes exit symmetry and flips sign at phi_exit = 0.605."
+    }
+  ],
+  "notes": "Tick 2 spent $52.65 and its most valuable outputs were again defects: two in the harness (ANOM-5/7), two in the guards (ANOM-4/8), one in the fills aggregation (ANOM-9), and one unpurchased dataset (ANOM-6). The measurement itself vindicated the inherited phi=0.5 while refuting the language wrapped around it."
+}

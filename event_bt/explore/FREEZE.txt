@@ -1,0 +1,34 @@
+frozen 2026-08-31
+split_date 2025-07-01
+discovery_smallcap n=2892
+validation_smallcap n=750 (SEALED)
+liquid_historical n=949 (CONTAMINATED-DESCRIPTIVE)
+eval_harness.py sha256=24b13eb90f7ac23021375008fd2dde9c631ea989e68f79693673aa6dbd06dc76
+AMENDMENT v2 2026-09-01 (PRE-PROBE, experiments.jsonl did not yet exist):
+  added resolve_feature (colA/colB ratios + month) for persona hypotheses;
+  no statistics changed; selftest re-PASSED.
+  eval_harness.py sha256=9f47c86fd82152157d0663a5fb7dc78a154d6cbadece0ee5d839242b97f6defb
+AMENDMENT v3 2026-09-01 (BETWEEN STAGES B3/B4, motivated by AUDIT calibration
+  findings, direction-neutral): within-season permutation p-value added as the
+  Stage-4 standard after audits showed the cluster bootstrap degenerates at
+  2-3 effective clusters (H7 claimed p=0.00026 -> honest p=0.065; H1 t=-9.68
+  -> artifact). Selftest 6/6 PASS.
+  eval_harness.py sha256=156e331911c37a1b62fe90bf6c0250d286488e5eecd5b239fe546757ad008548
+REGISTRY LOCKED 2026-09-01: m=6 tests (R1-R6), BH q=0.10, perm p-values,
+  sealed validation only.
+  REGISTRY.md sha256=d22ad12204fa699b367783bcff35fa706564c8a813230a70bc3437d203bc6a0d
+
+DISCLOSED LIMITATION 2026-09-01 (iteration-2 H11 audit, notes/H11_audit.md).
+  NOT an amendment: harness UNCHANGED, sha256 still 156e331911c3...; recorded
+  for correct reading of Stage-5 output.
+  within_season_perm_p floors p at 1/(n_perm+1) = 1/2001 = 0.0005, and cmd_test
+  derives t_boot and mbf by INVERTING that floored p. So any probe reported at
+  p=0.0005 shows an identical t=3.48 / MBF=0.0023 regardless of true effect
+  size -- a resolution artifact, not an estimate. Honest normal-theory t for
+  H11 (IC +0.15264, n=474) is 3.32; independent ticker-cluster bootstrap gives
+  t=3.29, 95% CI [0.063, 0.243].
+  Consequence for Stage 5: R1-R6 p-values landing at the 0.0005 floor must be
+  read as "p <= 0.0005", and their printed t/MBF must NOT be quoted as effect
+  magnitudes. BH-FDR comparisons are unaffected (ordering preserved). Raising
+  n_perm would change the frozen grader and is therefore NOT done before the
+  lockbox opens.
