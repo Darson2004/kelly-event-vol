@@ -1,0 +1,12 @@
+# core (Kelly engine, backtest engine, harnesses)
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+scikit-learn>=1.3      # Ledoit-Wolf covariance in `kelly.py portfolio`
+matplotlib>=3.8        # repricing scatter / summary figures
+# live screens (toolkit/*.py pull quotes and earnings dates from Yahoo)
+yfinance>=0.2.40
+lxml>=5.0
+# vendor data (optional; only fetch_databento.py / fetch_tcbbo.py)
+databento>=0.40
+tzdata>=2024.1         # zoneinfo on Windows

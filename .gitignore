@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv*/
+.ipynb_checkpoints/
+
+# licensed / vendor market data and caches (never committed)
+event_bt/data/
+event_bt/raw/
+event_bt/_synth/
+event_bt/_synth_db/
+_bt_cache/
+*.dbn
+*.dbn.zst
+*.parquet
+*.pkl
+*.npz
+
+# run outputs written by the code (curated summaries live in results/)
+event_bt/results/
+event_bt/results_*/
+event_bt/execution/panel_*.csv
+event_bt/explore/data/
+event_bt/explore/lockbox/
+toolkit/pilot_fills.csv
+toolkit/implied_move_history.csv
+toolkit/*_moves.csv
+
+# local
+.env
+*.log

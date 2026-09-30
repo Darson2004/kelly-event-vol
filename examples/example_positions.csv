@@ -1,0 +1,5 @@
+symbol,kind,qty,mult,delta,exp_return
+AAPL,stock,200,,,
+NVDA,stock,100,,,
+MSFT,stock,150,,,
+SPY,option,-2,100,0.5,
