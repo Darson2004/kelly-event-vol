@@ -18,7 +18,7 @@ selftest                       synthetic checks of every statistic
 Every `test` call logs to experiments.jsonl BEFORE interpretation. The
 finding-auditor replays entries via the logged command string.
 
-Run: python eval_harness.py ...
+Run: C:/Users/darso/AppData/Local/Programs/Python/Python312/python.exe eval_harness.py ...
 """
 
 from __future__ import annotations

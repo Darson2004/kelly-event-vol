@@ -66,7 +66,7 @@ def main():
     with open(os.path.join(HERE, "lockbox", "DO_NOT_READ.md"), "w") as f:
         f.write("# SEALED\n\nvalidation_smallcap.csv is opened ONCE, at "
                 "PROTOCOL Stage 4, gated by LOCKBOX_OPEN=1 and the explicit "
-                "explicit sign-off 'OPEN THE LOCKBOX'. Reading it earlier burns "
+                "session line 'OPEN THE LOCKBOX'. Reading it earlier burns "
                 "the only honest validation this dataset will ever have.\n")
     print("frozen: discovery n=%d | validation n=%d (sealed) | liquid n=%d "
           "(descriptive) | harness hash %s..." %

@@ -38,7 +38,7 @@ selftest                                   planted-effect / planted-null checks
 Every graded command APPENDS to experiments.jsonl BEFORE printing a result.
 Alpha budget for the continual loop is tracked in STATE.json, not here.
 
-Run: python exec_harness.py ...
+Run: C:/Users/darso/AppData/Local/Programs/Python/Python312/python.exe exec_harness.py ...
 """
 
 from __future__ import annotations

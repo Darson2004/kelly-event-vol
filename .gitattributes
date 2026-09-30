@@ -1,0 +1,4 @@
+# Frozen evaluator files: keep byte-identical so they match FREEZE.txt / SHA256SUMS / STATE.json
+event_bt/explore/eval_harness.py -text
+event_bt/explore/split_freeze.py -text
+event_bt/execution/exec_harness.py -text
