@@ -7,13 +7,13 @@ analyzed 2026-08-12.*
 ## The channel
 
 - **@VolatilityVibes** (channel id `UC0o3EucHQKZCUagsZt6TRAA`), created Nov 2024, ~49K subs,
-  exactly **7 videos**. Bills himself as a "professional volatility trader… trying to correct
-  misleading options educational content."
-- Every strategy video funnels to **oquants.com** ("Option Quants") — his SaaS:
-  $69–99/month for daily trade picks, vol/skew/momentum dashboards, 18y options data,
-  250+ signals, backtester, Discord. The free videos give the recipe; the data the recipe
-  needs (per-name implied/realized earnings-move history, ex-earnings IV, skew z-scores,
-  FF screener) is the paid product. That is the correct lens for everything below.
+  exactly **7 videos**. The author describes himself as a professional volatility trader
+  aiming to correct misleading options education.
+- The channel is affiliated with **oquants.com** ("Option Quants"), a subscription data and
+  analytics service. The videos describe each strategy's rules; the historical data needed to
+  replicate them (per-name implied/realized earnings-move history, ex-earnings IV, skew
+  z-scores) is not freely available, which is the main practical obstacle to independent
+  verification.
 
 ## Video catalog
 
@@ -25,11 +25,11 @@ analyzed 2026-08-12.*
 | 4 | How to Spot 10x Vertical Spreads BEFORE They Take Off | Jul 2025 | 85K | **Strategy: skew-RV verticals + momentum** | reviewed |
 | 5 | This Simple Options Strategy Crushes SPY (27% CAGR, 2.4 Sharpe) | Oct 2025 | 86K | **Strategy: Forward Factor calendars** | reviewed |
 | 6 | The Earnings Volatility Strategy Big Funds Use | Dec 2025 | 27K | **Strategy: pre-earnings long straddle** | reviewed |
-| 7 | The ONLY Options Trading Course You Need [3.5h Masterclass] | May 2026 | 98K | Education (course funnel, COURSE30 promo) | previously covered |
+| 7 | The ONLY Options Trading Course You Need [3.5h Masterclass] | May 2026 | 98K | Education (course) | previously covered |
 
 All four strategies are one family: **relative value on the vol surface** — event vol vs
-its own history (#1, #6), front vs forward vol (#5), wing vs ATM skew (#4). No
-"sell puts for income" nonsense anywhere; the math he shows (variance additivity,
+its own history (#1, #6), front vs forward vol (#5), wing vs ATM skew (#4). The
+math shown (variance additivity,
 forward vol, implied-move extraction) is correct — we verified his worked examples.
 
 ---
@@ -60,8 +60,8 @@ dropped) was done on the *full sample* → the walk-forward is only partially OO
 gap means P&L lives in a small tail of winners (long-vol winners cluster in vol spikes —
 the equity curve may be two episodes). Costs "applied" but never quantified — for 2-week
 ATM single-name straddles exited on earnings day, round-trip spread is the whole ballgame.
-Live coefficients = final refit on ALL data, never validated. The data the signals need is
-exactly what oquants sells.
+Live coefficients = final refit on ALL data, not separately validated. The signals require
+per-name implied-move history, which needs a commercial options dataset.
 
 **Feasibility: the most credible of the new strategies, at half his claimed edge.**
 The idea has real academic support (Gao–Xing–Zhang-style pre-earnings straddle results;
@@ -107,9 +107,9 @@ markets are widest (his own losses exceed −100% of debit from round-trip costs
 "observations" are overlapping and cluster in the same stress episodes → effective N far
 smaller; per-trade Kelly (16–31%) ignores that simultaneous high-FF positions all lose
 together when backwardation steepens. Live example (10/17 DTE) isn't even a tested pair.
-Ex-earn IV history requires an ORATS-class dataset = his product.
+Ex-earn IV history requires an ORATS-class commercial dataset.
 
-**Feasibility: directionally real, numerically fantasy.** The term-structure premium is
+**Feasibility: directionally real; the headline numbers are unlikely to survive real fills.** The term-structure premium is
 documented and "never trade calendars blind, require genuine ex-earnings backwardation" is
 sound hygiene — note it's the same backwardation condition our short-straddle screen uses
 (slope ≤ −0.00406/day), monetized with defined risk instead of naked short vol. But the
@@ -136,9 +136,9 @@ mean, **32% win rate**, edge $0.03 on a $0.17 debit) and **four hand-picked winn
 (quantum/crypto-treasury/rare-earth/EV) during the May–Jul 2026 run.
 
 **Holes.** By his own model the strategy loses ~⅔ of the time, yet the showcase is 4-for-4 —
-pure survivorship, and momentum did the heavy lifting (his own drift table shows breakeven
+a selected sample, and momentum did the heavy lifting (his own drift table shows breakeven
 at −50% annualized drift ⇒ P&L is drift-dominated; the "non-directional edge" framing
-oversells). Circularity: he spends the intro explaining why lognormal Black-Scholes misses
+overstates it). Circularity: he spends the intro explaining why lognormal Black-Scholes misses
 fat tails, then computes the "edge" with a flat-vol lognormal Monte Carlo — in meme names
 the 145–280% wing IVs may be *fair* compensation for exactly those jumps (SBET did an ATM
 offering mid-run). Skew z-scores on stocks with weeks of history are noise. $0.03 theoretical
@@ -162,33 +162,30 @@ claim. Relevant to entries on speculative names.
   smoother curve, ~35% max DD at 15% margin alloc); flat-forward/forward vol ratio as an
   underused signal (R²≈1%). His 5-step process (hypothesis → falsification → structure →
   fractional-Kelly size → "day-zero" management) is our own operating protocol in different
-  clothes. Irony: after preaching test-set discipline he model-selects (linear vs logistic)
-  on the test set. Showcase KWEB short straddle (Apr 2025, IV 68% vs RV 52%, exit at IV≈50%
-  after the tariff vol crush) is honest-ish — he labels it "as good as it gets."
+  clothes. One methodological caveat: model selection (linear vs logistic) is done on the
+  test set. The showcase KWEB short straddle (Apr 2025, IV 68% vs RV 52%, exit at IV≈50%
+  after the tariff vol crush) is presented with appropriate caution ("as good as it gets").
 - **Black-Scholes intuition (#2)**: good retail pedagogy (N(d1)/N(d2) via discrete lognormal
   example), no strategy, minor conflations (N(d1) as exercise probability).
-- **Masterclass (#7)**: 3.5h course consolidating all of the above; top-of-funnel for the
-  COURSE30 oquants promo. Previously reviewed.
+- **Masterclass (#7)**: 3.5h course consolidating all of the above. Previously reviewed.
 
 ---
 
 ## Cross-channel verdict
 
-1. **He is almost certainly a real vol trader, and the honest moments are unusually honest
-   for YouTube**: "the IV ramp is not edge," "unconditional calendars lose," "median filtered
+1. **The content reflects genuine volatility-trading expertise and is unusually candid**: "the IV ramp is not edge," "unconditional calendars lose," "median filtered
    trade still loses money," "VRP doesn't work in single names," full-Kelly disavowals.
    The math checks out everywhere we verified it.
-2. **Every backtest fails the same way, always leaning flattering**: undisclosed costs,
-   in-sample feature/threshold selection, headline = best grid cell, Kelly quoted for
-   wow-factor, no per-year OOS breakdowns, unverifiable track-record claims ($6M+, mid-7
-   figures). Trust the *sign* of his findings, never the *magnitude*. Working prior:
+2. **The backtests share the same methodological gaps**: costs not quantified,
+   in-sample feature/threshold selection, headline = best grid cell, full-Kelly figures
+   quoted, no per-year OOS breakdowns, and no independently verifiable live record. The
+   *sign* of the findings is more reliable than the *magnitude*. Working prior:
    live edge ≈ ⅓–½ of claimed, before asking whether your fills match his assumptions.
-3. **The reproducibility gap is the business model.** Each strategy's binding constraint is
-   a dataset (earnings implied/realized move history; xearn IV since 2007; skew z-score
-   history) that is exactly the oquants subscription. The videos are high-quality lead
-   magnets for a data/SaaS company — which also means the signals are being actively
-   crowded by his own 49K subscribers, in the very mid-liquidity pocket he claims is the
-   edge's moat.
+3. **Reproducibility depends on commercial data.** Each strategy's binding constraint is
+   a dataset (earnings implied/realized move history; ex-earnings IV since 2007; skew
+   z-score history) that is not freely available. A widely viewed channel also implies
+   some crowding of the signals, particularly in the mid-liquidity names where the edge is
+   said to persist.
 4. **The channel arc is itself the lesson**: Feb 2025 = *sell* event vol at T−0; Dec 2025 =
    *buy* event vol at T−14 and exit into the seller's entry. Not a contradiction — a
    relative-value book. The tradeable object is the signal (event vol rich/cheap vs

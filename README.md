@@ -5,7 +5,7 @@ A Kelly-sizing engine plus an options event-volatility backtest on real OPRA quo
 ## Key results
 
 - **One rule survives costs.** In 42 liquid names (971 events, 2020-09 to 2026-08), buying the ATM straddle 14 days before earnings when the implied earnings move is at most 0.90x the name's average past realized move earns **+6.39% per trade net of half-spread fills and commissions** (n=193, t=2.65, Kelly f\* = 0.81). It is positive in **5 of 6 calendar years**, including **+11.8% in 2022**, a year when selling vol worked. It holds for both before-open (+5.6%) and after-close (+6.6%) announcements.
-- **The fitted model a public strategy video promotes is worth nothing out of sample.** An expanding-window walk-forward linear model on the same signals returns **+0.01% per trade** (n=292, t=0.01, Kelly f\* = 0). The simple pre-set threshold carries all of the edge.
+- **The fitted model from the source strategy does not hold out of sample.** An expanding-window walk-forward linear model on the same signals returns **+0.01% per trade** (n=292, t=0.01, Kelly f\* = 0). The simple pre-set threshold carries all of the edge.
 - **The mispricing is real in every universe, but in small caps you can't trade it.** Across 1,051 small/mid-cap names the repricing slope has t = -32.7. The same trade makes +7.4% gross and **-17.3% net** because straddles there quote about 23.5% wide as a fraction of premium. Every configuration I tested there is negative after costs.
 - **Measured fills confirm the cost model; the "mid-or-better" wording is dropped.** $52.65 of OPRA `tcbbo` (trades with the quote at trade time, 539 entry days) shows only **7.7% of volume prints at mid**. The fraction of the half-spread you pay (φ) is about **0.40-0.55**, not 0. The backtest's φ = 0.5 holds up; the result turns negative if the (unmeasured) exit leg costs φ > 0.605.
 - **Mining the signal gave one fragile candidate and two methodological fixes.** A 9-cell, 48-trial pre-registered sweep found one candidate, "recency anchoring": after a quiet prior quarter, big winners come about twice as often. Its apparent p = 0.00026 fell to an honest **p ≈ 0.065** once I found the season-cluster bootstrap overstates significance about 100x when there are only 2-3 effective clusters. Six hypotheses are locked for a one-shot test on a sealed holdout that has not been opened yet.
@@ -15,7 +15,7 @@ A Kelly-sizing engine plus an options event-volatility backtest on real OPRA quo
 
 ## Why this problem
 
-Earnings options are the cleanest natural experiment in single-name vol. The event is scheduled, the implied move can be backed out of the term structure, and the realized move shows up a day later. Retail content sells both sides of it: "sell the IV crush" and "buy cheap event vol two weeks early". Neither comes with costs. The academic record (Gao-Xing-Zhang 2018; Dubinsky-Johannes-Kaeck-Seeger 2019) covers T-3 to T-1 and through-event windows. As far as I found, nobody has published a test of whether event variance priced at T-14 converges toward the name's own history. This repo tests that on real quotes with real spreads, and sizes whatever survives with the same log-utility machinery used everywhere else.
+Earnings options are the cleanest natural experiment in single-name vol. The event is scheduled, the implied move can be backed out of the term structure, and the realized move shows up a day later. Published practitioner strategies cover both sides of it: "sell the IV crush" and "buy cheap event vol two weeks early". Neither is usually tested with costs made explicit. The academic record (Gao-Xing-Zhang 2018; Dubinsky-Johannes-Kaeck-Seeger 2019) covers T-3 to T-1 and through-event windows. As far as I found, nobody has published a test of whether event variance priced at T-14 converges toward the name's own history. This repo tests that on real quotes with real spreads, and sizes whatever survives with the same log-utility machinery used everywhere else.
 
 ## Method
 
@@ -66,7 +66,7 @@ The sizing doctrine is to run at 0.25-0.5x Kelly. Fractional Kelly $\lambda$ kee
 | cheap vs implied-move history | +4.41% | -10.1% | 163 | 1.26 | 0.27 |
 | unconditional | +2.16% | -6.9% | 949 | 1.90 | 0.20 |
 | unconditional, delta-hedged | +0.55% | -2.5% | 946 | 0.85 | 0.15 |
-| walk-forward linear model (strategy-video method) | +0.01% | -7.4% | 292 | 0.01 | **0.00, veto** |
+| walk-forward linear model (source strategy's method) | +0.01% | -7.4% | 292 | 0.01 | **0.00, veto** |
 | short the crush on rich names (T-0 to T+1) | +5.55% | +20.5% | 227 | 1.35 | 0.13 |
 | same rule, **T-7 entry** (`results/liquid_2020_2026/T7`) | +0.24% | -3.8% | 257 | 0.21 | 0.07 |
 
@@ -108,7 +108,7 @@ The sizing doctrine is to run at 0.25-0.5x Kelly. Fractional Kelly $\lambda$ kee
 | **Look-ahead in the signal** | Prior-move and prior-implied histories use only events strictly before entry. The walk-forward OLS fits only on trades that have already exited, with 2-year OOS blocks. |
 | **Post-print contamination** | Exits happen before the announcement. Session tags are checked, and the result holds for both BMO and AMC events. |
 | **Strike-band survivorship** | The synthetic selftest showed a ±10% strike band silently drops the big-move winners and biases long-straddle returns down. Assembly keeps ±30%. |
-| **Fill fantasy** | Every result is shown gross and net. The φ assumption was later checked against real prints (tcbbo), which also retired the "mid-or-better" wording. |
+| **Optimistic fills** | Every result is shown gross and net. The φ assumption was later checked against real prints (tcbbo), which also retired the "mid-or-better" wording. |
 | **Regime beta** | The rule's best year is 2022, a short-vol year. The small-cap 2024-26 sample is a buyers' regime and is labelled as such. |
 | **Multiple testing** | The signal hunt uses an evaluator frozen and SHA-256-hashed before any hypothesis was written. Every probe is logged to `experiments.jsonl` *before* it is interpreted (85 logged trials). There is a registered family of m = 6, BH-FDR q = 0.10 (a lone survivor needs p <= 0.0167), and a null verdict is only allowed after at least 3 probes plus a power statement. |
 | **Inference that lies at few clusters** | The season-cluster bootstrap-t turned H7's p = 0.00026 into what is really p ≈ 0.065. It was replaced by a within-season permutation test, disclosed as a between-stage amendment in `explore/FREEZE.txt`. |
@@ -119,7 +119,14 @@ The sizing doctrine is to run at 0.25-0.5x Kelly. Fractional Kelly $\lambda$ kee
 
 **The sealed holdout is deliberately not in this repo.** `event_bt/explore/lockbox/` holds the one-shot validation set for registered hypotheses R1-R6. It is opened exactly once, after explicit sign-off and with `LOCKBOX_OPEN=1`. The harness code that refers to it is included; the data is not. Publishing it before that single evaluation would destroy it as a test.
 
-**Frozen-file hashes.** `FREEZE.txt` and `SHA256SUMS` record the hashes of the harnesses and panels as they were frozen. Before publication, one docstring line in each harness was changed (a local interpreter path became `python`), so the published harness bytes differ from the recorded hashes only in that line. The panel CSVs the manifests cover are not published (see below).
+**Frozen-file hashes.** The harnesses are published byte-identical to their frozen versions, and `.gitattributes` marks them `-text` so line endings survive a clone. Their SHA-256 matches the final hash recorded in `event_bt/explore/FREEZE.txt` (v3) and in `event_bt/execution/FREEZE.txt` / `STATE.json`:
+
+```bash
+sha256sum event_bt/explore/eval_harness.py   # 156e331911c37a1b62fe90bf6c0250d286488e5eecd5b239fe546757ad008548
+sha256sum event_bt/execution/exec_harness.py # af29ac659de95d4564a8c1815d9eba0dcb8f2da77140823a03f6283c63cc794c
+```
+
+The panel CSVs the `SHA256SUMS` manifests cover are not published (see below).
 
 ## Repo layout
 

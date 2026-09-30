@@ -73,11 +73,11 @@ midpoint event returns in wide-spread names are exactly the fragile object.
 ## 3. What practitioners say (thread 3)
 
 - **No independent replication of VV's backtests exists anywhere** (Reddit, X,
-  Elite Trader, blogs — the record is empty, for and against). His "Forward
-  Factor" calendar is repackaged Predicting Alpha / Sinclair material from
-  2022-23. oquants ($297/qtr) shows no live track record; its own backtester
-  can't even express the exit-before-earnings rule (holds to expiration), and
-  it sells *both* a long and a short pre-earnings vol product simultaneously.
+  Elite Trader, blogs — the record is empty, for and against). The "Forward
+  Factor" calendar builds on earlier Predicting Alpha / Sinclair material from
+  2022-23. The associated oquants service does not publish a live track record,
+  and its backtester holds to expiration, so it cannot express the
+  exit-before-earnings rule directly.
 - **The one long-running live log of this exact trade**: SteadyOptions has
   bought pre-earnings straddles (enter 2–15d before, exit pre-event) since
   ~2012, self-reporting ~70% win years and 5–10% per-trade targets — the

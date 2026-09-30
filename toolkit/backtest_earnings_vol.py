@@ -5,7 +5,7 @@ earnings IV-crush backtest, using only free (equity) data.
 The claim under test (from the video + community summaries):
   sell the ATM front straddle right before earnings, buy it back right after,
   filter for rich/inverted IV, size at <=6%/trade -> ~66% win rate, ~90% CAGR,
-  ~20% drawdowns ($10k->$1M was the full-Kelly fantasy line).
+  ~20% drawdowns ($10k->$1M was the illustrative full-Kelly line).
 
 What we cannot replicate with free data: the actual historical straddle price
 before each event (needs historical option chains: ORATS / Databento OPRA).

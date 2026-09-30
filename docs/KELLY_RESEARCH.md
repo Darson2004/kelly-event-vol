@@ -278,7 +278,7 @@ Three facts came out:
 |---|---|---|
 | unconditional long, net of spreads | −12.4% | **0.00 — VETO** |
 | cheap-vs-implied-history rule, net | −11.6% | **0.00 — VETO** |
-| cheap rule, *gross* (fantasy mid fills) | +3.6% | 1.01 |
+| cheap rule, *gross* (idealized mid fills) | +3.6% | 1.01 |
 | cheap-vs-realized-history rule, net | −8.0% | **0.00 — VETO** |
 | short the crush (sell side!), net | −5.5% | **0.00 — VETO** |
 
@@ -309,8 +309,8 @@ The rm-rule cell is positive in 5 of 6 calendar years **including +11.8% in
 2022** (a short-vol regime — kills the "it's just regime beta" objection),
 symmetric across BMO/AMC sessions (leak check passed), and tail-driven
 (median trade −4.9%; top decile = 36% of absolute P&L — the book must be wide
-and patient). Ironies worth savoring: the *filter* works and the *fitted
-model* the video actually sells is exactly zero OOS; and the same trade is
+and patient). Two observations: the simple *filter* works while the *fitted
+model* from the source strategy is exactly zero OOS; and the same trade is
 un-tradeable one liquidity tier down (small/mid caps: spreads eat 3× the
 edge, all cells vetoed).
 
